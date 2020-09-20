@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { authService } from "fbase";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [newAccount, setNewAccount] = useState(true);
+  const [error, setError] = useState("");
   const onChange = (event) => {
     console.log(event.target.name);
     const {
@@ -14,9 +17,29 @@ const Auth = () => {
       setPassword(value);
     }
   };
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault(); // 기본 행위 방지 이게 없으면 새로고침 됨.
+    try {
+      if (newAccount) {
+        //create account
+        const data = await authService.createUserWithEmailAndPassword(
+          email,
+          password
+        );
+        console.log(data);
+      } else {
+        //log in
+        const data = await authService.signInWithEmailAndPassword(
+          email,
+          password
+        );
+        console.log(data);
+      }
+    } catch (error) {
+      setError(error.message);
+    }
   };
+  const toggleAccount = () => setNewAccount((prev) => !prev);
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -36,8 +59,12 @@ const Auth = () => {
           value={password}
           onChange={onChange}
         ></input>
-        <input type="submit" value="login" />
+        <input type="submit" value={newAccount ? "Create Account" : "Log In"} />
+        {error}
       </form>
+      <span onClick={toggleAccount}>
+        {newAccount ? "Sign in" : "Create Account"}
+      </span>
       <div>
         <button>Google</button>
         <button>github</button>

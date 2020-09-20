@@ -1,13 +1,24 @@
-import React, { useState } from "react";
-import { Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import AppRouter from "components/Router";
 import { authService } from "fbase";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
+  const [init, setInit] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //useEffect->React Hook의 한 종류
+  useEffect(() => {
+    authService.onAuthStateChanged((user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setInit(true);
+    });
+  }, []);
   return (
     <>
-      <AppRouter isLoggedIn={isLoggedIn} />
+      {init ? <AppRouter isLoggedIn={isLoggedIn} /> : "Initialized..."}
       <footer>&copy; Nwitter {new Date().getFullYear()}</footer>
     </>
   );
