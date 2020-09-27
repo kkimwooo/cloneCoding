@@ -6,7 +6,7 @@ import Nweet from "components/Nweet";
 const Home = ({ userObj }) => {
   const [nweet, setNweet] = useState("");
   const [nweets, setNweets] = useState([]);
-  const [attachment, setAttachment] = useState();
+  const [attachment, setAttachment] = useState("");
 
   useEffect(() => {
     dbService.collection("nweets").onSnapshot((snapshot) => {
@@ -20,7 +20,7 @@ const Home = ({ userObj }) => {
   const onSubmit = async (event) => {
     event.preventDefault();
     let attachmentUrl = "";
-    if (attachment !== undefined) {
+    if (attachment !== "") {
       const attachmentRef = storageService
         .ref()
         .child(`${userObj.uid}/${uuidv4()}`);
@@ -43,7 +43,6 @@ const Home = ({ userObj }) => {
     } = event;
     setNweet(value);
   };
-  console.log(nweets);
   const onFileChange = (event) => {
     const {
       target: { files },
@@ -73,7 +72,7 @@ const Home = ({ userObj }) => {
         <input type="submit" value="Nweet" />
         {attachment && (
           <div>
-            <img src={attachment} width="50px" height="50px" />
+            <img src={attachment} width="50px" height="50px" alt="" />
             <button onClick={onClearAttachment}>Clear</button>
           </div>
         )}

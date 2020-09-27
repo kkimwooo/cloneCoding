@@ -8,7 +8,9 @@ const Nweet = ({ nweetObj, isOwner }) => {
     if (ok) {
       //delete nweet
       await dbService.doc(`nweets/${nweetObj.id}`).delete();
-      await storageService.refFromURL(nweetObj.attachmentUrl).delete();
+      if (nweetObj.attachmentUrl !== "") {
+        await storageService.refFromURL(nweetObj.attachmentUrl).delete();
+      }
     }
   };
   const toggleEditing = () => setEditing((prev) => !prev);
